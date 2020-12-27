@@ -67,7 +67,7 @@ object ImageProc extends App {
     result
   }
 
-  def copyMatrixFromBufferedImage(img: BufferedImage): Array[Array[Int]] = {
+  def evaluateMatrixFromBufferedImage(img: BufferedImage): Array[Array[Int]] = {
     val res = Array.ofDim[Int](img.getHeight, img.getWidth) //swap
     for (i <- 0 until img.getHeight)
       for (j <- 0 until img.getWidth)
@@ -75,7 +75,7 @@ object ImageProc extends App {
     res
   }
 
-  def copyMatrixToBufferedImage(mat: Array[Array[Int]]): BufferedImage = {
+  def evaluateBufferedImageFromMatrix(mat: Array[Array[Int]]): BufferedImage = {
     val res = new BufferedImage(mat(0).length, mat.length, BufferedImage.TYPE_INT_RGB) //swap w and h
     for (i <- mat(0).indices)
       for (j <- mat.indices)
@@ -85,21 +85,30 @@ object ImageProc extends App {
 
   //Higher Order Function used for applying a pixel-atomic operation across an image
   def applyPixelTransformation(f: Int => Int, input: BufferedImage): BufferedImage = {
-    copyMatrixToBufferedImage(copyMatrixFromBufferedImage(input).map(_.map(f(_))))
+    evaluateBufferedImageFromMatrix(evaluateMatrixFromBufferedImage(input).map(_.map(f(_))))
   }
 
   //Higher Order Function used for applying a 'matrix-atomic' operation across an image
   def applyImageTransformation(f: Array[Array[Int]] => Array[Array[Int]], input: BufferedImage): BufferedImage = {
-    copyMatrixToBufferedImage(f(copyMatrixFromBufferedImage(input)))
+    evaluateBufferedImageFromMatrix(f(evaluateMatrixFromBufferedImage(input)))
+  }
+
+  //A Higher Order Function to execute a Transformation N Times
+  def applyImageTransformationNTimes(f: Array[Array[Int]] => Array[Array[Int]],
+                                     input: BufferedImage,
+                                     n: Int): BufferedImage = {
+    if (n == 0) input
+    else applyImageTransformationNTimes(f, evaluateBufferedImageFromMatrix(f(evaluateMatrixFromBufferedImage(input))), n-1)
   }
 
   def main() {
     val photo1 = ImageIO.read(new File("src/main/resources/jasonfox.png"))
-    val photo2 = applyPixelTransformation(halfPixel, photo1) //Works perfectly, let it remain
-    val photo3 = applyImageTransformation(mirrorMatrix, photo1) //Works perfectly
-    val photo4 = applyImageTransformation(flipMatrix, photo1)
+//    val photo2 = applyPixelTransformation(halfPixel, photo1) //Works perfectly, let it remain
+//    val photo3 = applyImageTransformation(mirrorMatrix, photo1) //Works perfectly
+//    val photo4 = applyImageTransformation(flipMatrix, photo1)
+    val photo5 = applyImageTransformationNTimes(mirrorMatrix, photo1, 2) //Produces the same image
 
-    ImageIO.write(photo2, "jpg", new File("src/main/resources/deepfry.jpg"))
+    ImageIO.write(photo5, "jpg", new File("src/main/resources/deepfry.jpg"))
   }
   main()
 }
