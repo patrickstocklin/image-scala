@@ -45,8 +45,8 @@ object ImageProc extends App {
 
   //Pass this into your HOF to Flip your image
   def mirrorMatrix(input: Array[Array[Int]]): Array[Array[Int]] = {
-    val width = input(0).size
-    val height = input.size
+    val width = input(0).length
+    val height = input.length
     val result = Array.ofDim[Int](height, width)
     for (i <- 0 until height)
       for (j <- 0 until width) {
@@ -57,8 +57,8 @@ object ImageProc extends App {
 
   //Pass this into your HOF to Mirror your image
   def flipMatrix(input: Array[Array[Int]]): Array[Array[Int]] = {
-    val width = input(0).size
-    val height = input.size
+    val width = input(0).length
+    val height = input.length
     val result = Array.ofDim[Int](height, width)
     for (i <- 0 until height) //for each col
       for (j <- 0 until width) { // for each row
@@ -76,9 +76,9 @@ object ImageProc extends App {
   }
 
   def copyMatrixToBufferedImage(mat: Array[Array[Int]]): BufferedImage = {
-    val res = new BufferedImage(mat(0).size, mat.size, BufferedImage.TYPE_INT_RGB) //swap w and h
-    for (i <- 0 until mat(0).size)
-      for (j <- 0 until mat.size)
+    val res = new BufferedImage(mat(0).length, mat.length, BufferedImage.TYPE_INT_RGB) //swap w and h
+    for (i <- mat(0).indices)
+      for (j <- mat.indices)
         res.setRGB(i, j, convertToColorBit(mat(j)(i))) //swap res i and j
     res
   }
