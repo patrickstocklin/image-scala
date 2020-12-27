@@ -84,20 +84,20 @@ object ImageProc extends App {
   }
 
   //Higher Order Function used for applying a pixel-atomic operation across an image
-  def applyPixelFunc(f: Int => Int, input: BufferedImage): BufferedImage = {
+  def applyPixelTransformation(f: Int => Int, input: BufferedImage): BufferedImage = {
     copyMatrixToBufferedImage(copyMatrixFromBufferedImage(input).map(_.map(f(_))))
   }
 
   //Higher Order Function used for applying a 'matrix-atomic' operation across an image
-  def applyTransformation(f: Array[Array[Int]] => Array[Array[Int]], input: BufferedImage): BufferedImage = {
+  def applyImageTransformation(f: Array[Array[Int]] => Array[Array[Int]], input: BufferedImage): BufferedImage = {
     copyMatrixToBufferedImage(f(copyMatrixFromBufferedImage(input)))
   }
 
   def main() {
     val photo1 = ImageIO.read(new File("src/main/resources/jasonfox.png"))
-    val photo2 = applyPixelFunc(halfPixel, photo1) //Works perfectly, let it remain
-    val photo3 = applyTransformation(mirrorMatrix, photo1) //Works perfectly
-    val photo4 = applyTransformation(flipMatrix, photo1)
+    val photo2 = applyPixelTransformation(halfPixel, photo1) //Works perfectly, let it remain
+    val photo3 = applyImageTransformation(mirrorMatrix, photo1) //Works perfectly
+    val photo4 = applyImageTransformation(flipMatrix, photo1)
 
     ImageIO.write(photo2, "jpg", new File("src/main/resources/deepfry.jpg"))
   }
