@@ -61,30 +61,6 @@ object App extends App {
     result
   }
 
-  //Higher Order Function used for applying a pixel-atomic operation across an image
-  def applyPixelFunc(f: Int => Int, input: BufferedImage): BufferedImage = {
-
-    //Convert BufferedImage into Array[Array[Int]]
-    val mat = Array.ofDim[Int](input.getWidth, input.getHeight)
-    for (i <- 0 until input.getWidth)
-      for (j <- 0 until input.getHeight)
-        mat(i)(j) = input.getRGB(i,j)
-
-    val temp = mat.map(_.map(f(_)))
-    //Convert Array[Array[Int]] back to Buffered Image
-    val res = new BufferedImage(input.getWidth, input.getHeight, BufferedImage.TYPE_INT_RGB)
-    for (i <- 0 until input.getWidth)
-      for (j <- 0 until input.getHeight)
-        res.setRGB(i, j, convertToColorBit(temp(i)(j)))
-
-    res
-  }
-
-  //Higher Order Function used for applying a pixel-atomic operation across an image
-  def applyTransformation(f: Array[Array[Int]] => Array[Array[Int]], input: BufferedImage): BufferedImage = {
-    copyMatrixToBufferedImage(f(copyMatrixFromBufferedImage(input)))
-  }
-
   def copyMatrixFromBufferedImage(img: BufferedImage): Array[Array[Int]] = {
     val res = Array.ofDim[Int](img.getWidth, img.getHeight)
     for (i <- 0 until img.getWidth)
@@ -99,6 +75,31 @@ object App extends App {
       for (j <- 0 until mat.size)
         res.setRGB(i, j, convertToColorBit(mat(j)(i)))
     res
+  }
+
+  //Higher Order Function used for applying a pixel-atomic operation across an image
+  //Work on breaking these out later
+  def applyPixelFunc(f: Int => Int, input: BufferedImage): BufferedImage = {
+    //Convert BufferedImage into Array[Array[Int]]
+    val mat = Array.ofDim[Int](input.getWidth, input.getHeight)
+    for (i <- 0 until input.getWidth)
+      for (j <- 0 until input.getHeight)
+        mat(i)(j) = input.getRGB(i,j)
+
+    val temp = mat.map(_.map(f(_)))
+
+    //Convert Array[Array[Int]] back to Buffered Image
+    val res = new BufferedImage(input.getWidth, input.getHeight, BufferedImage.TYPE_INT_RGB)
+    for (i <- 0 until input.getWidth)
+      for (j <- 0 until input.getHeight)
+        res.setRGB(i, j, convertToColorBit(temp(i)(j)))
+
+    res
+  }
+
+  //Higher Order Function used for applying a 'matrix-atomic' operation across an image
+  def applyTransformation(f: Array[Array[Int]] => Array[Array[Int]], input: BufferedImage): BufferedImage = {
+    copyMatrixToBufferedImage(f(copyMatrixFromBufferedImage(input)))
   }
 
   def main() {
