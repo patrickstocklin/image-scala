@@ -33,7 +33,6 @@ Given a packed integer color, we can extract the three components as follows:
 object App extends App {
 
   def convertToColorBit(int: Int): Int = int & 0xffffff
-
   def zeroPixel(int: Int): Int = 0 * int
   def halfPixel(int: Int): Int = int / 2
 
@@ -66,26 +65,26 @@ object App extends App {
     for (i <- 0 until img.getWidth)
       for (j <- 0 until img.getHeight)
         res(i)(j) = img.getRGB(i,j)
+    println(res.length)
+    println(res(0).length)
     res
   }
 
   def copyMatrixToBufferedImage(mat: Array[Array[Int]]): BufferedImage = {
-    val res = new BufferedImage(mat(0).size, mat.size, BufferedImage.TYPE_INT_RGB)
+    val res = new BufferedImage(mat(0).size, mat.size, BufferedImage.TYPE_INT_RGB) //swap w and h
     for (i <- 0 until mat(0).size)
       for (j <- 0 until mat.size)
-        res.setRGB(i, j, convertToColorBit(mat(j)(i)))
+        res.setRGB(i, j, convertToColorBit(mat(j)(i))) //swap res i and j
+    println(res.getHeight)
+    println(res.getWidth)
     res
   }
 
   //Higher Order Function used for applying a pixel-atomic operation across an image
-  //Work on breaking these out later
+  //Need to understand why I cannot simply plug in my other functions and get a refactored method below (double check coords)
   def applyPixelFunc(f: Int => Int, input: BufferedImage): BufferedImage = {
     //Convert BufferedImage into Array[Array[Int]]
-    val mat = Array.ofDim[Int](input.getWidth, input.getHeight)
-    for (i <- 0 until input.getWidth)
-      for (j <- 0 until input.getHeight)
-        mat(i)(j) = input.getRGB(i,j)
-
+    val mat = copyMatrixFromBufferedImage(input)
     val temp = mat.map(_.map(f(_)))
 
     //Convert Array[Array[Int]] back to Buffered Image
@@ -95,6 +94,7 @@ object App extends App {
         res.setRGB(i, j, convertToColorBit(temp(i)(j)))
 
     res
+//    copyMatrixToBufferedImage(temp) //why does this rotate, figure out coords dude
   }
 
   //Higher Order Function used for applying a 'matrix-atomic' operation across an image
@@ -105,9 +105,9 @@ object App extends App {
   def main() {
     val photo1 = ImageIO.read(new File("src/main/resources/jasonfox.png"))
 
-//    val photo2 = applyPixelFunc(halfPixel, photo1)
+    val photo2 = applyPixelFunc(halfPixel, photo1)
 //    val photo2 = applyTransformation(flipMatrix, photo1)
-    val photo2 = applyTransformation(mirrorMatrix, photo1)
+//    val photo2 = applyTransformation(mirrorMatrix, photo1)
 
     ImageIO.write(photo2, "jpg", new File("src/main/resources/test.jpg"))
   }
