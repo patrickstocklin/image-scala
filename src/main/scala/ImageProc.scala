@@ -95,12 +95,11 @@ object ImageProc extends App {
 
   def main() {
     val photo1 = ImageIO.read(new File("src/main/resources/jasonfox.png"))
-    val photo2 = applyPixelFunc(redPixel, photo1) //Works perfectly, let it remain
+    val photo2 = applyPixelFunc(halfPixel, photo1) //Works perfectly, let it remain
     val photo3 = applyTransformation(mirrorMatrix, photo1) //Works perfectly
-
     val photo4 = applyTransformation(flipMatrix, photo1)
 
-    ImageIO.write(photo4, "jpg", new File("src/main/resources/flip.jpg"))
+    ImageIO.write(photo2, "jpg", new File("src/main/resources/deepfry.jpg"))
   }
   main()
 }
