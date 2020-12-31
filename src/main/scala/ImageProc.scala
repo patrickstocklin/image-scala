@@ -43,7 +43,7 @@ object ImageProc extends App {
   def bluePixel(int: Int): Int = blue
   def halfPixel(int: Int): Int = int / 2
 
-  //Pass this into your HOF to Flip your image
+  //Pass this into your HOF to Mirror your image
   def mirrorMatrix(input: Array[Array[Int]]): Array[Array[Int]] = {
     val width = input(0).length
     val height = input.length
@@ -55,7 +55,7 @@ object ImageProc extends App {
     result
   }
 
-  //Pass this into your HOF to Mirror your image
+  //Pass this into your HOF to Flip your image
   def flipMatrix(input: Array[Array[Int]]): Array[Array[Int]] = {
     val width = input(0).length
     val height = input.length
